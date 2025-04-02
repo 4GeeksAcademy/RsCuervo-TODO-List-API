@@ -9,3 +9,36 @@
     import 'relative/path/to/stylesheet.scss';
 
 */
+.tasks-container {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+   
+  }
+  
+  .task-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: relative;
+  }
+  
+  .task-input {
+    width: 100%;
+    border-radius: 4px;
+    cursor: default; 
+    padding-right: 40px; 
+  }
+  
+  .delete-btn {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: none;
+  }
+  
+  .task-item:hover .delete-btn {
+    display: inline-block;
+  }
+  
