@@ -33,7 +33,7 @@ const Home = () => {
 					.then((response) => response.json())
 					.then((data) => {
 						console.log("Tareas obtenidas:", data);
-						setItems(data.todo || []);
+						setItems(data.todos || []);
 					})
 					.catch((err) => {
 						console.error("Error al obtener tareas:", err);
