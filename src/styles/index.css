@@ -41,4 +41,7 @@
   .task-item:hover .delete-btn {
     display: inline-block;
   }
+  .contador-tareas{
+    font-size: x-small;
+  }
   

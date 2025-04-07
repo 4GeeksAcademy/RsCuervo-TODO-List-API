@@ -8,15 +8,39 @@ const Home = () => {
 	const [items, setItems] = useState([]);
 
 
+
 	useEffect(() => {
-		fetch(`${apiURL}/users/${userName}`)
-			.then((response) => response.json())
-			.then((data) => {
-				console.log("Tareas obtenidas:", data);
-				setItems(data.todo || []);
+		fetch(`${apiURL}/users/${userName}`, {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({}),
+		})
+			.then((resp) => {
+				if (resp.ok) {
+					console.log("Usuario creado exitosamente.");
+				} else if (resp.status === 400) {
+					console.log("El usuario ya existe.");
+				} else {
+					console.error("Error al crear usuario:", resp.status);
+				}
+				return resp.json();
 			})
-			.catch((err) => {
-				console.error("Error al obtener tareas:", err);
+			.then((data) => {
+				console.log("Respuesta del servidor:", data);
+
+
+				fetch(`${apiURL}/users/${userName}`)
+					.then((response) => response.json())
+					.then((data) => {
+						console.log("Tareas obtenidas:", data);
+						setItems(data.todo || []);
+					})
+					.catch((err) => {
+						console.error("Error al obtener tareas:", err);
+					});
+			})
+			.catch((error) => {
+				console.error("Error general:", error);
 			});
 	}, []);
 
@@ -51,7 +75,7 @@ const Home = () => {
 		})
 			.then((resp) => {
 				if (!resp.ok) throw new Error("Error al eliminar la tarea");
-				setItems(items.filter((item) => item.id !== id)); 
+				setItems(items.filter((item) => item.id !== id));
 			})
 			.catch((err) => console.error("Error al eliminar tarea:", err));
 
@@ -60,21 +84,21 @@ const Home = () => {
 
 	const eliminarTareas = () => {
 		const promises = items.map((item) => {
-			
+
 			return fetch(`${apiURL}/todos/${item.id}`, {
 				method: "DELETE",
 			})
-			.then((response) => {
-				if (!response.ok) {
-					throw new Error(`Error al eliminar la tarea con id ${item.id}`);
-				}
-			});
+				.then((response) => {
+					if (!response.ok) {
+						throw new Error(`Error al eliminar la tarea con id ${item.id}`);
+					}
+				});
 		});
-	
-		
+
+
 		Promise.all(promises)
 			.then(() => {
-				setItems([]); 
+				setItems([]);
 				console.log("Todas las tareas han sido eliminadas.");
 			})
 			.catch((err) => {
@@ -94,13 +118,12 @@ const Home = () => {
 					onChange={(e) => setTodo(e.target.value)}
 					onKeyDown={(e) => e.key === "Enter" && handleAddTodo()}
 				/>
-
-
+				
 				<div className="tasks-container">
-					{items.length === 0 ? (
+					{items && items.length === 0 ? (
 						<p className="text-muted">No hay tareas, añade tareas</p>
 					) : (
-						items.map((item) => (
+						items && items.map((item) => (
 							<div key={item.id} className="task-item position-relative">
 								<input
 									type="text"
@@ -117,6 +140,9 @@ const Home = () => {
 							</div>
 						))
 					)}
+				</div>
+				<div className="contador-tareas form-control container">
+					{items.length} tarea{items.length !== 1 ? "s" : ""} pendiente{items.length !== 1 ? "s" : ""}
 				</div>
 
 
